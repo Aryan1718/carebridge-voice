@@ -62,15 +62,16 @@ export const VoiceAssistant = () => {
     <div className="flex flex-col items-center justify-center min-h-screen p-8 bg-gradient-voice relative overflow-hidden">
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-glow-primary/10 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-glow-accent/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-secondary/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-accent/15 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
       </div>
 
       {/* Content */}
       <div className="relative z-10 flex flex-col items-center gap-12 max-w-2xl mx-auto text-center">
         {/* Header */}
         <div className="space-y-4">
-          <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-foreground via-primary to-accent bg-clip-text text-transparent">
+          <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
             CareBridge
           </h1>
           <p className="text-xl text-muted-foreground">
@@ -83,29 +84,29 @@ export const VoiceAssistant = () => {
           {/* Glow effect */}
           <div className={`absolute inset-0 transition-all duration-500 ${
             agentState === "talking"
-              ? 'shadow-[0_0_80px_30px_hsl(var(--glow-primary)/0.4)]' 
+              ? 'shadow-[0_0_80px_30px_hsl(var(--primary)/0.3)]' 
               : agentState === "listening"
-              ? 'shadow-[0_0_60px_20px_hsl(var(--glow-accent)/0.3)]'
-              : 'shadow-[0_0_40px_15px_hsl(var(--glow-primary)/0.1)]'
+              ? 'shadow-[0_0_60px_20px_hsl(var(--secondary)/0.3)]'
+              : 'shadow-[0_0_40px_15px_hsl(var(--accent)/0.2)]'
           } rounded-full`} />
           
           {/* Animated Orb Visualization */}
           <div className={`relative w-48 h-48 rounded-full flex items-center justify-center transition-all duration-500 ${
             isConnected 
-              ? 'bg-gradient-to-br from-primary/30 to-accent/30 scale-110' 
-              : 'bg-gradient-to-br from-primary/10 to-accent/10'
+              ? 'bg-gradient-to-br from-primary/40 via-secondary/40 to-accent/40 scale-110' 
+              : 'bg-gradient-to-br from-primary/20 via-secondary/20 to-accent/20'
           } backdrop-blur-sm border-2 ${
-            isConnected ? 'border-primary/50' : 'border-primary/20'
+            isConnected ? 'border-primary/60' : 'border-primary/30'
           }`}>
             {agentState === "listening" && (
-              <div className="absolute inset-0 rounded-full border-2 border-primary/50 animate-ping" />
+              <div className="absolute inset-0 rounded-full border-2 border-secondary/60 animate-ping" />
             )}
             {agentState === "talking" && (
               <>
                 <div className="absolute inset-0 rounded-full">
-                  <div className="absolute inset-2 rounded-full bg-primary/20 animate-pulse" />
+                  <div className="absolute inset-2 rounded-full bg-primary/30 animate-pulse" />
                 </div>
-                <div className="absolute inset-0 rounded-full border-2 border-accent/30 animate-pulse" style={{ animationDelay: '0.3s' }} />
+                <div className="absolute inset-0 rounded-full border-2 border-accent/40 animate-pulse" style={{ animationDelay: '0.3s' }} />
               </>
             )}
             

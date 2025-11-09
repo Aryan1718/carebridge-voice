@@ -50,6 +50,7 @@ export default {
         glow: {
           primary: "hsl(var(--glow-primary))",
           accent: "hsl(var(--glow-accent))",
+          tertiary: "hsl(var(--glow-tertiary))",
         },
       },
       backgroundImage: {
