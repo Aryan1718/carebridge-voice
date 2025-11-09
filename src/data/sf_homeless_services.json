@@ -1,0 +1,251 @@
+[
+  {
+    "name": "GLIDE",
+    "keywords": [
+      "food",
+      "meals",
+      "hygiene",
+      "basic-needs",
+      "harm-reduction",
+      "case-management"
+    ],
+    "contact": {
+      "address": "330 Ellis Street, San Francisco, CA 94102",
+      "phone": "(415) 674-6000",
+      "email": "info@glide.org",
+      "website": "https://www.glide.org"
+    }
+  },
+  {
+    "name": "St. Anthony Foundation",
+    "keywords": [
+      "food",
+      "meals",
+      "clothing",
+      "basic-needs",
+      "hygiene",
+      "technology-access",
+      "support-services"
+    ],
+    "contact": {
+      "address": "150 Golden Gate Avenue, San Francisco, CA 94102",
+      "phone": "(415) 241-2600",
+      "email": "info@stanthonysf.org",
+      "website": "https://www.stanthonysf.org"
+    }
+  },
+  {
+    "name": "San Francisco-Marin Food Bank",
+    "keywords": [
+      "food",
+      "groceries",
+      "pantry",
+      "food-assistance",
+      "family-support"
+    ],
+    "contact": {
+      "address": "900 Pennsylvania Avenue, San Francisco, CA 94107",
+      "phone": "(415) 282-1900",
+      "email": "help@sfmfoodbank.org",
+      "website": "https://www.sfmfoodbank.org"
+    }
+  },
+  {
+    "name": "CityTeam San Francisco",
+    "keywords": [
+      "food",
+      "meals",
+      "showers",
+      "clothing",
+      "shelter",
+      "recovery",
+      "basic-needs"
+    ],
+    "contact": {
+      "address": "164 6th Street, San Francisco, CA 94103",
+      "phone": "415-861-8688",
+      "email": "sanfranciscoinfo@cityteam.org",
+      "website": "https://www.cityteam.org/san-francisco"
+    }
+  },
+  {
+    "name": "Episcopal Community Services of San Francisco (ECS)",
+    "keywords": [
+      "shelter",
+      "interim-housing",
+      "supportive-housing",
+      "coordinated-entry",
+      "meals",
+      "case-management"
+    ],
+    "contact": {
+      "address": "165 8th Street, San Francisco, CA 94103",
+      "phone": "(415) 487-3300",
+      "email": "info@ecs-sf.org",
+      "website": "https://ecs-sf.org"
+    }
+  },
+  {
+    "name": "ECS Sanctuary Shelter (Interim Housing)",
+    "keywords": [
+      "shelter",
+      "interim-housing",
+      "adults",
+      "meals"
+    ],
+    "contact": {
+      "phone": "(415) 487-3300 x7000",
+      "email": "sfaces@ecs-sf.org",
+      "website": "https://ecs-sf.org/adult-coordinated-entry/"
+    }
+  },
+  {
+    "name": "Hamilton Families",
+    "keywords": [
+      "family-shelter",
+      "housing-assistance",
+      "meals",
+      "case-management",
+      "families-with-children"
+    ],
+    "contact": {
+      "address": "2567 Mission Street, San Francisco, CA 94110",
+      "phone": "(415) 321-2612",
+      "email": "contact-us@hamiltonfamilies.org",
+      "website": "https://hamiltonfamilies.org"
+    }
+  },
+  {
+    "name": "Raphael House of San Francisco",
+    "keywords": [
+      "family-shelter",
+      "transitional-housing",
+      "family-services"
+    ],
+    "contact": {
+      "address": "1065 Sutter Street, San Francisco, CA 94109",
+      "phone": "(415) 345-7200",
+      "email": "info@raphaelhouse.org",
+      "website": "https://www.raphaelhouse.org"
+    }
+  },
+  {
+    "name": "Larkin Street Youth Services",
+    "keywords": [
+      "youth-shelter",
+      "youth-housing",
+      "meals",
+      "education",
+      "employment",
+      "healthcare",
+      "lgbtq-youth"
+    ],
+    "contact": {
+      "address": "134 Golden Gate Avenue, San Francisco, CA 94102",
+      "phone": "(415) 673-0911",
+      "youth_helpline": "1-800-669-6196",
+      "website": "https://larkinstreetyouth.org"
+    }
+  },
+  {
+    "name": "St. Vincent de Paul Society of San Francisco (MSC-South & Navigation Centers)",
+    "keywords": [
+      "shelter",
+      "meals",
+      "hygiene",
+      "navigation-center",
+      "basic-needs"
+    ],
+    "contact": {
+      "admin_address": "1175 Howard Street, San Francisco, CA 94103",
+      "admin_phone": "415-977-1270",
+      "msc_south_address": "525 5th Street, San Francisco, CA 94107",
+      "msc_south_phone": "415-597-7960",
+      "website": "https://svdp-sf.org"
+    }
+  },
+  {
+    "name": "The Salvation Army \u2013 SF Harbor Light Center & Programs",
+    "keywords": [
+      "shelter",
+      "residential-treatment",
+      "recovery",
+      "basic-needs"
+    ],
+    "contact": {
+      "address": "1275 Harrison Street, San Francisco, CA 94103",
+      "phone": "(415) 503-3003",
+      "website": "https://sanfranciscoharborlight.salvationarmy.org"
+    }
+  },
+  {
+    "name": "Hospitality House",
+    "keywords": [
+      "men-shelter",
+      "drop-in",
+      "showers",
+      "mail",
+      "groceries",
+      "employment-support",
+      "community-arts"
+    ],
+    "contact": {
+      "address": "290 Turk Street, San Francisco, CA 94102",
+      "phone": "(415) 749-2100",
+      "email": "info@hospitalityhouse.org",
+      "website": "https://www.hospitalityhouse.org"
+    }
+  },
+  {
+    "name": "Project Homeless Connect",
+    "keywords": [
+      "navigation",
+      "referrals",
+      "basic-needs",
+      "id-support",
+      "hygiene",
+      "benefits-assistance"
+    ],
+    "contact": {
+      "address": "1031 Franklin Street, 2nd Floor, San Francisco, CA 94109",
+      "resource_line": "1-855-588-7968",
+      "email": "edc@projecthomelessconnect.org",
+      "website": "https://www.projecthomelessconnect.org"
+    }
+  },
+  {
+    "name": "211 Bay Area (San Francisco)",
+    "keywords": [
+      "referral",
+      "shelter",
+      "food",
+      "healthcare",
+      "mental-health",
+      "dv-support",
+      "benefits",
+      "24-7-hotline"
+    ],
+    "contact": {
+      "phone": "211 or 1-800-273-6222",
+      "text": "Text ZIP code to 898211",
+      "website": "https://211bayarea.org"
+    }
+  },
+  {
+    "name": "San Francisco Department of Homelessness & Supportive Housing (HSH) \u2013 Coordinated Entry & Access Points",
+    "keywords": [
+      "coordinated-entry",
+      "shelter-access",
+      "housing-assistance",
+      "family-shelter",
+      "youth-services",
+      "adults"
+    ],
+    "contact": {
+      "address": "440 Turk Street, San Francisco, CA 94102",
+      "website": "https://hsh.sfgov.org",
+      "adult_coordinated_entry_phone": "(415) 487-3300 x7000",
+      "adult_coordinated_entry_email": "sfaces@ecs-sf.org"
+    }
+  }
+]

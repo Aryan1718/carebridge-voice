@@ -4,15 +4,18 @@ import { Button } from "@/components/ui/button";
 import { Orb, AgentState } from "@/components/ui/orb";
 import { Mic, MicOff } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import organizationsData from "@/data/sf_homeless_services.json";
 
 interface Organization {
   name: string;
-  description: string;
-  contact?: string;
-  location?: string;
-  services?: string;
-  hours?: string;
-  address?: string;
+  keywords: string[];
+  contact: {
+    address?: string;
+    phone?: string;
+    email?: string;
+    website?: string;
+    [key: string]: string | undefined;
+  };
 }
 
 export const VoiceAssistant = () => {
@@ -30,81 +33,35 @@ export const VoiceAssistant = () => {
       if (conversationText) {
         console.log("Full conversation text:", conversationText);
         
-        // Look for patterns where organizations are mentioned
-        // Multiple patterns to catch different phrasings
-        const patterns = [
-          /(?:here are (?:a few )?(?:nearby )?)?resources.*?help:\s*([^.?!]+)/gi,
-          /(?:organizations|resources).*?(?:help|available|assist):\s*([^.?!]+)/gi,
-          /(?:including|such as|like):\s*([^.?!]+)/gi
-        ];
+        // Match organizations mentioned in conversation against our JSON database
+        const matchedOrgs: Organization[] = [];
         
-        const allOrgNames = new Set<string>();
-        
-        // Try all patterns
-        patterns.forEach(pattern => {
-          const matches = [...conversationText.matchAll(pattern)];
-          matches.forEach(match => {
-            if (match[1]) {
-              // Split by comma, "and", "or"
-              const names = match[1]
-                .split(/,|\band\b|\bor\b/gi)
-                .map(name => name.trim())
-                .filter(name => name.length > 0);
-              names.forEach(name => allOrgNames.add(name));
+        organizationsData.forEach((org) => {
+          // Check if organization name is mentioned (case-insensitive, fuzzy match)
+          const orgNameLower = org.name.toLowerCase();
+          const conversationLower = conversationText.toLowerCase();
+          
+          // Match full name or significant parts of name
+          const nameVariations = [
+            orgNameLower,
+            ...orgNameLower.split(/\s+/), // individual words
+            ...org.keywords.map(k => k.toLowerCase().replace(/-/g, ' '))
+          ];
+          
+          const isMatch = nameVariations.some(variation => {
+            if (variation.length > 3) { // Only check meaningful words
+              return conversationLower.includes(variation);
             }
+            return false;
           });
+          
+          if (isMatch) {
+            matchedOrgs.push(org);
+          }
         });
         
-        if (allOrgNames.size > 0) {
-          const orgNames = Array.from(allOrgNames);
-          
-          const parsedOrgs = orgNames.map(name => {
-            const cleanName = name.replace(/\([^)]*\)/g, '').trim();
-            
-            // Create detailed information based on organization name
-            let description = 'Community support organization';
-            let services = 'Food assistance, case management, and resource referrals';
-            let contact = 'Contact through CareBridge referral system';
-            let address = 'San Francisco, CA';
-            let hours = 'Hours vary - contact for details';
-            
-            // Customize based on known organizations
-            if (cleanName.toLowerCase().includes('glide')) {
-              description = 'GLIDE Memorial Church provides comprehensive support services';
-              services = 'Daily meals, housing support, health services, family programs, and case management';
-              address = '330 Ellis St, San Francisco, CA 94102';
-              hours = 'Mon-Fri: 7:30 AM - 4:30 PM';
-            } else if (cleanName.toLowerCase().includes('anthony')) {
-              description = 'St. Anthony Foundation serves the poor and homeless';
-              services = 'Free dining room, clothing, medical care, technology lab, and social services';
-              address = '121 Golden Gate Ave, San Francisco, CA 94102';
-              hours = 'Daily meals served, various program hours';
-            } else if (cleanName.toLowerCase().includes('food bank')) {
-              description = 'San Francisco-Marin Food Bank fights hunger';
-              services = 'Food pantries, groceries, nutrition education, CalFresh enrollment';
-              address = 'Multiple distribution sites throughout SF';
-              hours = 'Varies by location';
-            } else if (cleanName.toLowerCase().includes('cityteam')) {
-              description = 'CityTeam provides emergency services and recovery programs';
-              services = 'Emergency shelter, meals, addiction recovery, job training';
-              address = '164 6th St, San Francisco, CA 94103';
-              hours = '24/7 emergency services';
-            }
-            
-            return {
-              name: cleanName,
-              description,
-              services,
-              contact,
-              location: 'San Francisco, CA',
-              address,
-              hours
-            };
-          });
-          
-          console.log("Parsed organizations:", parsedOrgs);
-          setOrganizations(parsedOrgs);
-        }
+        console.log("Matched organizations:", matchedOrgs);
+        setOrganizations(matchedOrgs);
       }
     },
     onMessage: (message: any) => {
@@ -295,44 +252,64 @@ export const VoiceAssistant = () => {
               <Card key={idx} className="bg-card/50 backdrop-blur-sm border-border hover:shadow-lg transition-all hover:scale-[1.02]">
                 <CardHeader>
                   <CardTitle className="text-lg font-bold text-primary">{org.name}</CardTitle>
-                  <CardDescription className="flex items-center gap-1 text-sm">
-                    📍 {org.location}
+                  <CardDescription className="flex flex-wrap gap-1 mt-2">
+                    {org.keywords.slice(0, 4).map((keyword, kidx) => (
+                      <span key={kidx} className="text-xs bg-secondary/20 px-2 py-1 rounded-full">
+                        {keyword.replace(/-/g, ' ')}
+                      </span>
+                    ))}
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <p className="text-sm font-semibold text-foreground mb-1">About</p>
-                    <p className="text-sm text-foreground/80">{org.description}</p>
-                  </div>
-                  
-                  {org.services && (
+                <CardContent className="space-y-3">
+                  {org.contact.address && (
                     <div>
-                      <p className="text-sm font-semibold text-foreground mb-1">Services</p>
-                      <p className="text-sm text-foreground/80">{org.services}</p>
+                      <p className="text-sm font-semibold text-foreground mb-1">📍 Address</p>
+                      <p className="text-sm text-foreground/80">{org.contact.address}</p>
                     </div>
                   )}
                   
-                  {org.address && (
+                  {org.contact.phone && (
                     <div>
-                      <p className="text-sm font-semibold text-foreground mb-1">Address</p>
-                      <p className="text-sm text-foreground/80">{org.address}</p>
+                      <p className="text-sm font-semibold text-foreground mb-1">📞 Phone</p>
+                      <p className="text-sm text-foreground/80">{org.contact.phone}</p>
                     </div>
                   )}
                   
-                  {org.hours && (
+                  {org.contact.email && (
                     <div>
-                      <p className="text-sm font-semibold text-foreground mb-1">Hours</p>
-                      <p className="text-sm text-foreground/80">{org.hours}</p>
+                      <p className="text-sm font-semibold text-foreground mb-1">✉️ Email</p>
+                      <p className="text-sm text-foreground/80 break-all">{org.contact.email}</p>
                     </div>
                   )}
                   
-                  {org.contact && (
-                    <div className="pt-2 border-t border-border">
-                      <p className="text-xs text-muted-foreground">
-                        📞 {org.contact}
-                      </p>
+                  {org.contact.website && (
+                    <div>
+                      <p className="text-sm font-semibold text-foreground mb-1">🌐 Website</p>
+                      <a 
+                        href={org.contact.website} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-sm text-primary hover:underline break-all"
+                      >
+                        {org.contact.website}
+                      </a>
                     </div>
                   )}
+                  
+                  {/* Display any additional contact fields */}
+                  {Object.entries(org.contact).map(([key, value]) => {
+                    if (!['address', 'phone', 'email', 'website'].includes(key) && value) {
+                      return (
+                        <div key={key}>
+                          <p className="text-sm font-semibold text-foreground mb-1 capitalize">
+                            {key.replace(/_/g, ' ')}
+                          </p>
+                          <p className="text-sm text-foreground/80">{value}</p>
+                        </div>
+                      );
+                    }
+                    return null;
+                  })}
                 </CardContent>
               </Card>
             ))}
