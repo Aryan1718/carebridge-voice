@@ -28,23 +28,37 @@ export const VoiceAssistant = () => {
       
       // Parse organizations from the complete conversation when it ends
       if (conversationText) {
-        console.log("Full conversation text:", conversationText);
+        console.log("=== FULL CONVERSATION TEXT ===");
+        console.log(conversationText);
+        console.log("=== END CONVERSATION TEXT ===");
         
-        // More comprehensive pattern to capture all organizations mentioned
-        const resourcePattern = /(?:resources|organizations|here are some|including|such as|like).*?(?:help|available|assist|support)?:?\s*([^.?!]+)/gi;
-        const allMatches = [...conversationText.matchAll(resourcePattern)];
-        
-        // Collect all organization names from all matches
+        // Multiple parsing strategies to catch organizations
         const allOrgNames = new Set<string>();
         
-        allMatches.forEach(match => {
-          const names = match[1]
-            .split(/,|\band\b|\bor\b/)
-            .map(name => name.trim())
-            .filter(name => name.length > 3 && !name.toLowerCase().includes('navigation center'));
-          
-          names.forEach(name => allOrgNames.add(name));
+        // Strategy 1: Look for common patterns
+        const patterns = [
+          /(?:resources|organizations|here are some|including|such as|like|try|contact|reach out to|visit)[\s:]*([^.?!]+)/gi,
+          /(?:at|to)\s+([A-Z][A-Za-z\s&'-]+(?:Foundation|Church|Center|Bank|Team|House|Mission|Shelter|Kitchen|Program))/g,
+          /([A-Z][A-Za-z\s&'-]{2,}(?:Foundation|Church|Center|Bank|Team|House|Mission|Shelter|Kitchen|Program))/g,
+        ];
+        
+        patterns.forEach(pattern => {
+          const matches = [...conversationText.matchAll(pattern)];
+          matches.forEach(match => {
+            const text = match[1] || match[0];
+            const names = text.split(/,|\band\b|\bor\b/);
+            names.forEach(name => {
+              const cleaned = name.trim().replace(/^(at|to|the)\s+/i, '');
+              if (cleaned.length > 5 && !cleaned.toLowerCase().includes('navigation center')) {
+                allOrgNames.add(cleaned);
+              }
+            });
+          });
         });
+        
+        console.log("=== EXTRACTED ORGANIZATIONS ===");
+        console.log(Array.from(allOrgNames));
+        console.log("=== END EXTRACTED ===");
         
         if (allOrgNames.size > 0) {
           const parsedOrgs = Array.from(allOrgNames).map(name => {
