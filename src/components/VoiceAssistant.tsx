@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useConversation } from "@elevenlabs/react";
 import { Button } from "@/components/ui/button";
 import { Orb, AgentState } from "@/components/ui/orb";
@@ -21,7 +21,7 @@ interface Organization {
 export const VoiceAssistant = () => {
   const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [conversationText, setConversationText] = useState<string>("");
-  const [assistantText, setAssistantText] = useState<string>("");
+  const assistantTextRef = useRef<string>("");
 
   const conversation = useConversation({
     onConnect: () => {
@@ -31,6 +31,7 @@ export const VoiceAssistant = () => {
       console.log("Disconnected from ElevenLabs");
       
       // Parse organizations only from assistant messages
+      const assistantText = assistantTextRef.current;
       if (assistantText) {
         console.log("Assistant text:", assistantText);
         
@@ -66,7 +67,7 @@ export const VoiceAssistant = () => {
           
           // Only capture assistant messages for organization matching
           if (source === 'ai') {
-            setAssistantText(prev => prev + ' ' + messageText);
+            assistantTextRef.current += ' ' + messageText;
           }
         }
       }
@@ -98,7 +99,7 @@ export const VoiceAssistant = () => {
       try {
         setOrganizations([]); // Clear previous results
         setConversationText(""); // Clear previous conversation
-        setAssistantText(""); // Clear assistant text
+        assistantTextRef.current = ""; // Clear assistant text
         await conversation.startSession({
           agentId: "agent_2501k9jkm33getbbgxtk7pkmpxnk",
         } as any);
