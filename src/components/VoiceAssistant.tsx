@@ -25,14 +25,36 @@ export const VoiceAssistant = () => {
       
       // Parse organizations from the complete conversation when it ends
       if (conversationText) {
-        const orgPattern = /(?:organization|org|service):\s*([^\n]+)/gi;
-        const matches = [...conversationText.matchAll(orgPattern)];
+        console.log("Full conversation text:", conversationText);
+        
+        // Look for patterns where organizations are mentioned
+        // Pattern 1: "resources that might be able to help: [org names]"
+        const resourcePattern = /(?:resources|organizations).*?(?:help|available):\s*([^.]+)/gi;
+        const matches = [...conversationText.matchAll(resourcePattern)];
         
         if (matches.length > 0) {
-          const parsedOrgs = matches.map(match => ({
-            name: match[1].trim(),
-            description: conversationText.substring(match.index!, Math.min(match.index! + 200, conversationText.length))
-          }));
+          // Extract organization names from comma-separated lists
+          const orgNames = matches[0][1]
+            .split(/,|\band\b/)
+            .map(name => name.trim())
+            .filter(name => name.length > 0 && !name.toLowerCase().includes('navigation center'));
+          
+          const parsedOrgs = orgNames.map(name => {
+            // Find the context around this organization name in the conversation
+            const nameIndex = conversationText.indexOf(name);
+            const contextStart = Math.max(0, nameIndex - 100);
+            const contextEnd = Math.min(conversationText.length, nameIndex + 300);
+            const context = conversationText.substring(contextStart, contextEnd);
+            
+            return {
+              name: name.replace(/\([^)]*\)/g, '').trim(), // Remove parenthetical notes
+              description: `Support organization in San Francisco`,
+              location: 'San Francisco',
+              contact: 'Contact information available upon referral'
+            };
+          });
+          
+          console.log("Parsed organizations:", parsedOrgs);
           setOrganizations(parsedOrgs);
         }
       }
