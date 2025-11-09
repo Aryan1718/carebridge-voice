@@ -10,6 +10,9 @@ interface Organization {
   description: string;
   contact?: string;
   location?: string;
+  services?: string;
+  hours?: string;
+  address?: string;
 }
 
 export const VoiceAssistant = () => {
@@ -40,17 +43,46 @@ export const VoiceAssistant = () => {
             .filter(name => name.length > 0 && !name.toLowerCase().includes('navigation center'));
           
           const parsedOrgs = orgNames.map(name => {
-            // Find the context around this organization name in the conversation
-            const nameIndex = conversationText.indexOf(name);
-            const contextStart = Math.max(0, nameIndex - 100);
-            const contextEnd = Math.min(conversationText.length, nameIndex + 300);
-            const context = conversationText.substring(contextStart, contextEnd);
+            const cleanName = name.replace(/\([^)]*\)/g, '').trim();
+            
+            // Create detailed information based on organization name
+            let description = 'Community support organization';
+            let services = 'Food assistance, case management, and resource referrals';
+            let contact = 'Contact through CareBridge referral system';
+            let address = 'San Francisco, CA';
+            let hours = 'Hours vary - contact for details';
+            
+            // Customize based on known organizations
+            if (cleanName.toLowerCase().includes('glide')) {
+              description = 'GLIDE Memorial Church provides comprehensive support services';
+              services = 'Daily meals, housing support, health services, family programs, and case management';
+              address = '330 Ellis St, San Francisco, CA 94102';
+              hours = 'Mon-Fri: 7:30 AM - 4:30 PM';
+            } else if (cleanName.toLowerCase().includes('anthony')) {
+              description = 'St. Anthony Foundation serves the poor and homeless';
+              services = 'Free dining room, clothing, medical care, technology lab, and social services';
+              address = '121 Golden Gate Ave, San Francisco, CA 94102';
+              hours = 'Daily meals served, various program hours';
+            } else if (cleanName.toLowerCase().includes('food bank')) {
+              description = 'San Francisco-Marin Food Bank fights hunger';
+              services = 'Food pantries, groceries, nutrition education, CalFresh enrollment';
+              address = 'Multiple distribution sites throughout SF';
+              hours = 'Varies by location';
+            } else if (cleanName.toLowerCase().includes('cityteam')) {
+              description = 'CityTeam provides emergency services and recovery programs';
+              services = 'Emergency shelter, meals, addiction recovery, job training';
+              address = '164 6th St, San Francisco, CA 94103';
+              hours = '24/7 emergency services';
+            }
             
             return {
-              name: name.replace(/\([^)]*\)/g, '').trim(), // Remove parenthetical notes
-              description: `Support organization in San Francisco`,
-              location: 'San Francisco',
-              contact: 'Contact information available upon referral'
+              name: cleanName,
+              description,
+              services,
+              contact,
+              location: 'San Francisco, CA',
+              address,
+              hours
             };
           });
           
@@ -244,19 +276,46 @@ export const VoiceAssistant = () => {
               <p className="text-center text-muted-foreground mt-2">Here are the organizations from your conversation</p>
             </div>
             {organizations.map((org, idx) => (
-              <Card key={idx} className="bg-card/50 backdrop-blur-sm border-border hover:shadow-lg transition-shadow">
+              <Card key={idx} className="bg-card/50 backdrop-blur-sm border-border hover:shadow-lg transition-all hover:scale-[1.02]">
                 <CardHeader>
-                  <CardTitle className="text-lg">{org.name}</CardTitle>
-                  {org.location && (
-                    <CardDescription>{org.location}</CardDescription>
-                  )}
+                  <CardTitle className="text-lg font-bold text-primary">{org.name}</CardTitle>
+                  <CardDescription className="flex items-center gap-1 text-sm">
+                    📍 {org.location}
+                  </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-2">
-                  <p className="text-sm text-foreground/80">{org.description}</p>
+                <CardContent className="space-y-4">
+                  <div>
+                    <p className="text-sm font-semibold text-foreground mb-1">About</p>
+                    <p className="text-sm text-foreground/80">{org.description}</p>
+                  </div>
+                  
+                  {org.services && (
+                    <div>
+                      <p className="text-sm font-semibold text-foreground mb-1">Services</p>
+                      <p className="text-sm text-foreground/80">{org.services}</p>
+                    </div>
+                  )}
+                  
+                  {org.address && (
+                    <div>
+                      <p className="text-sm font-semibold text-foreground mb-1">Address</p>
+                      <p className="text-sm text-foreground/80">{org.address}</p>
+                    </div>
+                  )}
+                  
+                  {org.hours && (
+                    <div>
+                      <p className="text-sm font-semibold text-foreground mb-1">Hours</p>
+                      <p className="text-sm text-foreground/80">{org.hours}</p>
+                    </div>
+                  )}
+                  
                   {org.contact && (
-                    <p className="text-xs text-muted-foreground">
-                      Contact: {org.contact}
-                    </p>
+                    <div className="pt-2 border-t border-border">
+                      <p className="text-xs text-muted-foreground">
+                        📞 {org.contact}
+                      </p>
+                    </div>
                   )}
                 </CardContent>
               </Card>
