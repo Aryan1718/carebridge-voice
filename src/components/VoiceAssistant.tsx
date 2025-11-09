@@ -81,32 +81,38 @@ export const VoiceAssistant = () => {
 
         {/* Orb Container */}
         <div className="relative flex items-center justify-center w-64 h-64">
-          {/* Glow effect */}
-          <div className={`absolute inset-0 transition-all duration-500 ${
+          {/* Outer glow rings */}
+          <div className={`absolute inset-0 rounded-full transition-all duration-700 ${
             agentState === "talking"
-              ? 'shadow-[0_0_80px_30px_hsl(var(--primary)/0.3)]' 
+              ? 'animate-pulse shadow-[0_0_60px_rgba(135,206,235,0.6)]'
               : agentState === "listening"
-              ? 'shadow-[0_0_60px_20px_hsl(var(--secondary)/0.3)]'
-              : 'shadow-[0_0_40px_15px_hsl(var(--accent)/0.2)]'
-          } rounded-full`} />
+              ? 'shadow-[0_0_40px_rgba(152,186,163,0.5)]'
+              : 'shadow-[0_0_20px_rgba(255,253,208,0.3)]'
+          }`} />
           
-          {/* Animated Orb Visualization */}
+          {/* Main orb container */}
           <div className={`relative w-48 h-48 rounded-full flex items-center justify-center transition-all duration-500 ${
             isConnected 
-              ? 'bg-gradient-to-br from-primary/40 via-secondary/40 to-accent/40 scale-110' 
-              : 'bg-gradient-to-br from-primary/20 via-secondary/20 to-accent/20'
-          } backdrop-blur-sm border-2 ${
-            isConnected ? 'border-primary/60' : 'border-primary/30'
-          }`}>
+              ? 'bg-gradient-to-br from-primary/30 to-accent/30 backdrop-blur-xl scale-110' 
+              : 'bg-gradient-to-br from-primary/10 to-accent/10 backdrop-blur-sm'
+          } border ${
+            isConnected ? 'border-primary/40' : 'border-primary/20'
+          } shadow-2xl`}>
+            
+            {/* Listening state - expanding ring */}
             {agentState === "listening" && (
-              <div className="absolute inset-0 rounded-full border-2 border-secondary/60 animate-ping" />
+              <>
+                <div className="absolute inset-0 rounded-full border-2 border-secondary/50 animate-ping" />
+                <div className="absolute inset-4 rounded-full border border-secondary/30 animate-pulse" />
+              </>
             )}
+            
+            {/* Talking state - multiple pulsing layers */}
             {agentState === "talking" && (
               <>
-                <div className="absolute inset-0 rounded-full">
-                  <div className="absolute inset-2 rounded-full bg-primary/30 animate-pulse" />
-                </div>
-                <div className="absolute inset-0 rounded-full border-2 border-accent/40 animate-pulse" style={{ animationDelay: '0.3s' }} />
+                <div className="absolute inset-0 rounded-full bg-primary/20 animate-pulse" />
+                <div className="absolute inset-3 rounded-full bg-accent/20 animate-pulse" style={{ animationDelay: '0.15s' }} />
+                <div className="absolute inset-6 rounded-full bg-secondary/20 animate-pulse" style={{ animationDelay: '0.3s' }} />
               </>
             )}
             
