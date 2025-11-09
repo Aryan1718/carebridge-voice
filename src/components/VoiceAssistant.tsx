@@ -1,19 +1,34 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useConversation } from "@elevenlabs/react";
 import { Button } from "@/components/ui/button";
 import { Orb, AgentState } from "@/components/ui/orb";
 import { Mic, MicOff } from "lucide-react";
+import { ScrollArea } from "@/components/ui/scroll-area";
+
+interface Message {
+  role: "user" | "assistant";
+  text: string;
+}
 
 export const VoiceAssistant = () => {
+  const [messages, setMessages] = useState<Message[]>([]);
+
   const conversation = useConversation({
     onConnect: () => {
       console.log("Connected to ElevenLabs");
     },
     onDisconnect: () => {
       console.log("Disconnected from ElevenLabs");
+      setMessages([]);
     },
     onMessage: (message) => {
       console.log("Message received:", message);
+      
+      // The message structure is { message: string; source: Role }
+      if (message.message && typeof message.message === 'string') {
+        const role = message.source === 'user' ? 'user' : 'assistant';
+        setMessages(prev => [...prev, { role, text: message.message }]);
+      }
     },
     onError: (error) => {
       console.error("Conversation error:", error);
@@ -135,6 +150,32 @@ export const VoiceAssistant = () => {
             </>
           )}
         </Button>
+
+        {/* Conversation Transcript */}
+        {messages.length > 0 && (
+          <div className="mt-8 p-6 rounded-2xl bg-card/50 backdrop-blur-sm border border-border max-w-2xl w-full animate-in fade-in duration-500">
+            <h3 className="text-sm font-semibold mb-4 text-foreground">Conversation</h3>
+            <ScrollArea className="h-64">
+              <div className="space-y-3">
+                {messages.map((msg, idx) => (
+                  <div
+                    key={idx}
+                    className={`p-3 rounded-lg ${
+                      msg.role === "user"
+                        ? "bg-primary/10 ml-auto max-w-[80%]"
+                        : "bg-secondary/10 mr-auto max-w-[80%]"
+                    }`}
+                  >
+                    <p className="text-xs font-medium mb-1 text-muted-foreground capitalize">
+                      {msg.role}
+                    </p>
+                    <p className="text-sm text-foreground">{msg.text}</p>
+                  </div>
+                ))}
+              </div>
+            </ScrollArea>
+          </div>
+        )}
 
         {/* Info card */}
         {!isConnected && status !== "connecting" && (
