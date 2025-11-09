@@ -14,6 +14,7 @@ interface Organization {
 
 export const VoiceAssistant = () => {
   const [organizations, setOrganizations] = useState<Organization[]>([]);
+  const [conversationText, setConversationText] = useState<string>("");
 
   const conversation = useConversation({
     onConnect: () => {
@@ -21,26 +22,28 @@ export const VoiceAssistant = () => {
     },
     onDisconnect: () => {
       console.log("Disconnected from ElevenLabs");
+      
+      // Parse organizations from the complete conversation when it ends
+      if (conversationText) {
+        const orgPattern = /(?:organization|org|service):\s*([^\n]+)/gi;
+        const matches = [...conversationText.matchAll(orgPattern)];
+        
+        if (matches.length > 0) {
+          const parsedOrgs = matches.map(match => ({
+            name: match[1].trim(),
+            description: conversationText.substring(match.index!, Math.min(match.index! + 200, conversationText.length))
+          }));
+          setOrganizations(parsedOrgs);
+        }
+      }
     },
     onMessage: (message) => {
       console.log("Message received:", message);
       
-      // Parse assistant messages for organization data
-      if (message.message && typeof message.message === 'string' && message.source === 'ai') {
-        const text = message.message;
-        
-        // Simple parsing - look for organization patterns
-        // This can be adjusted based on how the AI formats the response
-        const orgPattern = /(?:organization|org|service):\s*([^\n]+)/gi;
-        const matches = [...text.matchAll(orgPattern)];
-        
-        if (matches.length > 0) {
-          const newOrgs = matches.map(match => ({
-            name: match[1].trim(),
-            description: text.substring(match.index!, Math.min(match.index! + 200, text.length))
-          }));
-          setOrganizations(prev => [...prev, ...newOrgs]);
-        }
+      // Accumulate all conversation messages
+      if (message.message && typeof message.message === 'string') {
+        const speaker = message.source === 'ai' ? 'Assistant' : 'User';
+        setConversationText(prev => prev + `\n${speaker}: ${message.message}`);
       }
     },
     onError: (error) => {
@@ -69,6 +72,7 @@ export const VoiceAssistant = () => {
     } else {
       try {
         setOrganizations([]); // Clear previous results
+        setConversationText(""); // Clear previous conversation
         await conversation.startSession({
           agentId: "agent_2501k9jkm33getbbgxtk7pkmpxnk",
         } as any);
