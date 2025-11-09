@@ -3,15 +3,17 @@ import { useConversation } from "@elevenlabs/react";
 import { Button } from "@/components/ui/button";
 import { Orb, AgentState } from "@/components/ui/orb";
 import { Mic, MicOff } from "lucide-react";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
-interface Message {
-  role: "user" | "assistant";
-  text: string;
+interface Organization {
+  name: string;
+  description: string;
+  contact?: string;
+  location?: string;
 }
 
 export const VoiceAssistant = () => {
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [organizations, setOrganizations] = useState<Organization[]>([]);
 
   const conversation = useConversation({
     onConnect: () => {
@@ -19,15 +21,26 @@ export const VoiceAssistant = () => {
     },
     onDisconnect: () => {
       console.log("Disconnected from ElevenLabs");
-      setMessages([]);
     },
     onMessage: (message) => {
       console.log("Message received:", message);
       
-      // The message structure is { message: string; source: Role }
-      if (message.message && typeof message.message === 'string') {
-        const role = message.source === 'user' ? 'user' : 'assistant';
-        setMessages(prev => [...prev, { role, text: message.message }]);
+      // Parse assistant messages for organization data
+      if (message.message && typeof message.message === 'string' && message.source === 'ai') {
+        const text = message.message;
+        
+        // Simple parsing - look for organization patterns
+        // This can be adjusted based on how the AI formats the response
+        const orgPattern = /(?:organization|org|service):\s*([^\n]+)/gi;
+        const matches = [...text.matchAll(orgPattern)];
+        
+        if (matches.length > 0) {
+          const newOrgs = matches.map(match => ({
+            name: match[1].trim(),
+            description: text.substring(match.index!, Math.min(match.index! + 200, text.length))
+          }));
+          setOrganizations(prev => [...prev, ...newOrgs]);
+        }
       }
     },
     onError: (error) => {
@@ -55,8 +68,7 @@ export const VoiceAssistant = () => {
       await conversation.endSession();
     } else {
       try {
-        // For now, using the agent ID directly as it's a public agent
-        // The connection type should be specified
+        setOrganizations([]); // Clear previous results
         await conversation.startSession({
           agentId: "agent_2501k9jkm33getbbgxtk7pkmpxnk",
         } as any);
@@ -151,29 +163,27 @@ export const VoiceAssistant = () => {
           )}
         </Button>
 
-        {/* Conversation Transcript */}
-        {messages.length > 0 && (
-          <div className="mt-8 p-6 rounded-2xl bg-card/50 backdrop-blur-sm border border-border max-w-2xl w-full animate-in fade-in duration-500">
-            <h3 className="text-sm font-semibold mb-4 text-foreground">Conversation</h3>
-            <ScrollArea className="h-64">
-              <div className="space-y-3">
-                {messages.map((msg, idx) => (
-                  <div
-                    key={idx}
-                    className={`p-3 rounded-lg ${
-                      msg.role === "user"
-                        ? "bg-primary/10 ml-auto max-w-[80%]"
-                        : "bg-secondary/10 mr-auto max-w-[80%]"
-                    }`}
-                  >
-                    <p className="text-xs font-medium mb-1 text-muted-foreground capitalize">
-                      {msg.role}
+        {/* Organization Cards */}
+        {organizations.length > 0 && (
+          <div className="mt-8 w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 animate-in fade-in duration-500">
+            {organizations.map((org, idx) => (
+              <Card key={idx} className="bg-card/50 backdrop-blur-sm border-border hover:shadow-lg transition-shadow">
+                <CardHeader>
+                  <CardTitle className="text-lg">{org.name}</CardTitle>
+                  {org.location && (
+                    <CardDescription>{org.location}</CardDescription>
+                  )}
+                </CardHeader>
+                <CardContent className="space-y-2">
+                  <p className="text-sm text-foreground/80">{org.description}</p>
+                  {org.contact && (
+                    <p className="text-xs text-muted-foreground">
+                      Contact: {org.contact}
                     </p>
-                    <p className="text-sm text-foreground">{msg.text}</p>
-                  </div>
-                ))}
-              </div>
-            </ScrollArea>
+                  )}
+                </CardContent>
+              </Card>
+            ))}
           </div>
         )}
 
