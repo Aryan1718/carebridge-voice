@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useConversation } from "@elevenlabs/react";
 import { Button } from "@/components/ui/button";
+import { Orb, AgentState } from "@/components/ui/orb";
 import { Mic, MicOff } from "lucide-react";
 
 export const VoiceAssistant = () => {
@@ -50,13 +51,21 @@ export const VoiceAssistant = () => {
     }
   };
 
-  const getAgentState = () => {
+  const getAgentState = (): AgentState => {
     if (!isConnected) return null;
     if (isSpeaking) return "talking";
     return "listening";
   };
 
   const agentState = getAgentState();
+
+  // Colors for different states
+  const orbColors: [string, string] = 
+    agentState === "talking" 
+      ? ["#FF6B6B", "#F6E7D8"] 
+      : agentState === "listening"
+      ? ["#4ECDC4", "#A0E7E5"]
+      : ["#CADCFC", "#A0B9D1"];
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-8 bg-gradient-voice relative overflow-hidden">
@@ -81,44 +90,9 @@ export const VoiceAssistant = () => {
 
         {/* Orb Container */}
         <div className="relative flex items-center justify-center w-64 h-64">
-          {/* Outer glow rings */}
-          <div className={`absolute inset-0 rounded-full transition-all duration-700 ${
-            agentState === "talking"
-              ? 'animate-pulse shadow-[0_0_60px_rgba(135,206,235,0.6)]'
-              : agentState === "listening"
-              ? 'shadow-[0_0_40px_rgba(152,186,163,0.5)]'
-              : 'shadow-[0_0_20px_rgba(255,253,208,0.3)]'
-          }`} />
-          
-          {/* Main orb container */}
-          <div className={`relative w-48 h-48 rounded-full flex items-center justify-center transition-all duration-500 ${
-            isConnected 
-              ? 'bg-gradient-to-br from-primary/30 to-accent/30 backdrop-blur-xl scale-110' 
-              : 'bg-gradient-to-br from-primary/10 to-accent/10 backdrop-blur-sm'
-          } border ${
-            isConnected ? 'border-primary/40' : 'border-primary/20'
-          } shadow-2xl`}>
-            
-            {/* Listening state - expanding ring */}
-            {agentState === "listening" && (
-              <>
-                <div className="absolute inset-0 rounded-full border-2 border-secondary/50 animate-ping" />
-                <div className="absolute inset-4 rounded-full border border-secondary/30 animate-pulse" />
-              </>
-            )}
-            
-            {/* Talking state - multiple pulsing layers */}
-            {agentState === "talking" && (
-              <>
-                <div className="absolute inset-0 rounded-full bg-primary/20 animate-pulse" />
-                <div className="absolute inset-3 rounded-full bg-accent/20 animate-pulse" style={{ animationDelay: '0.15s' }} />
-                <div className="absolute inset-6 rounded-full bg-secondary/20 animate-pulse" style={{ animationDelay: '0.3s' }} />
-              </>
-            )}
-            
-            {/* Orb icon */}
-            <div className="text-6xl z-10">
-              {isConnected ? (isSpeaking ? "🗣️" : "🎙️") : "💬"}
+          <div className="relative h-48 w-48 rounded-full p-1 shadow-[inset_0_2px_8px_rgba(0,0,0,0.1)]">
+            <div className="bg-background h-full w-full overflow-hidden rounded-full shadow-[inset_0_0_12px_rgba(0,0,0,0.05)]">
+              <Orb colors={orbColors} seed={1000} agentState={agentState} />
             </div>
           </div>
         </div>
