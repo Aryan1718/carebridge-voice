@@ -39,9 +39,11 @@ export const VoiceAssistant = () => {
       await conversation.endSession();
     } else {
       try {
+        // For now, using the agent ID directly as it's a public agent
+        // The connection type should be specified
         await conversation.startSession({
           agentId: "agent_2501k9jkm33getbbgxtk7pkmpxnk",
-        });
+        } as any);
       } catch (error) {
         console.error("Failed to start conversation:", error);
       }
@@ -69,10 +71,10 @@ export const VoiceAssistant = () => {
         {/* Header */}
         <div className="space-y-4">
           <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-foreground via-primary to-accent bg-clip-text text-transparent">
-            Voice Assistant
+            CareBridge
           </h1>
           <p className="text-xl text-muted-foreground">
-            Your AI-powered conversational companion
+            Connecting you to care, kindness, and community
           </p>
         </div>
 
