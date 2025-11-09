@@ -163,9 +163,13 @@ export const VoiceAssistant = () => {
           )}
         </Button>
 
-        {/* Organization Cards */}
-        {organizations.length > 0 && (
+        {/* Organization Cards - Only show after conversation ends */}
+        {!isConnected && status !== "connecting" && organizations.length > 0 && (
           <div className="mt-8 w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 animate-in fade-in duration-500">
+            <div className="col-span-full mb-4">
+              <h2 className="text-2xl font-semibold text-center">Organizations Found</h2>
+              <p className="text-center text-muted-foreground mt-2">Here are the organizations from your conversation</p>
+            </div>
             {organizations.map((org, idx) => (
               <Card key={idx} className="bg-card/50 backdrop-blur-sm border-border hover:shadow-lg transition-shadow">
                 <CardHeader>
