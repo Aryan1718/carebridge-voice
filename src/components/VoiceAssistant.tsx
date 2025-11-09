@@ -30,19 +30,24 @@ export const VoiceAssistant = () => {
       if (conversationText) {
         console.log("Full conversation text:", conversationText);
         
-        // Look for patterns where organizations are mentioned
-        // Pattern 1: "resources that might be able to help: [org names]"
-        const resourcePattern = /(?:resources|organizations).*?(?:help|available):\s*([^.]+)/gi;
-        const matches = [...conversationText.matchAll(resourcePattern)];
+        // More comprehensive pattern to capture all organizations mentioned
+        const resourcePattern = /(?:resources|organizations|here are some|including|such as|like).*?(?:help|available|assist|support)?:?\s*([^.?!]+)/gi;
+        const allMatches = [...conversationText.matchAll(resourcePattern)];
         
-        if (matches.length > 0) {
-          // Extract organization names from comma-separated lists
-          const orgNames = matches[0][1]
-            .split(/,|\band\b/)
+        // Collect all organization names from all matches
+        const allOrgNames = new Set<string>();
+        
+        allMatches.forEach(match => {
+          const names = match[1]
+            .split(/,|\band\b|\bor\b/)
             .map(name => name.trim())
-            .filter(name => name.length > 0 && !name.toLowerCase().includes('navigation center'));
+            .filter(name => name.length > 3 && !name.toLowerCase().includes('navigation center'));
           
-          const parsedOrgs = orgNames.map(name => {
+          names.forEach(name => allOrgNames.add(name));
+        });
+        
+        if (allOrgNames.size > 0) {
+          const parsedOrgs = Array.from(allOrgNames).map(name => {
             const cleanName = name.replace(/\([^)]*\)/g, '').trim();
             
             // Create detailed information based on organization name
@@ -227,6 +232,16 @@ export const VoiceAssistant = () => {
           )}
         </Button>
 
+        {/* Info card */}
+        {!isConnected && status !== "connecting" && !conversationText && (
+          <div className="mt-8 p-6 rounded-2xl bg-card/50 backdrop-blur-sm border border-border max-w-md animate-in fade-in duration-500">
+            <p className="text-sm text-muted-foreground">
+              Click the button above to start a conversation with your AI voice assistant. 
+              Make sure to allow microphone access when prompted.
+            </p>
+          </div>
+        )}
+
         {/* Conversation Transcript - Only show after conversation ends */}
         {!isConnected && status !== "connecting" && conversationText && (
           <div className="mt-8 w-full max-w-4xl animate-in fade-in duration-500">
@@ -323,15 +338,6 @@ export const VoiceAssistant = () => {
           </div>
         )}
 
-        {/* Info card */}
-        {!isConnected && status !== "connecting" && (
-          <div className="mt-8 p-6 rounded-2xl bg-card/50 backdrop-blur-sm border border-border max-w-md animate-in fade-in duration-500">
-            <p className="text-sm text-muted-foreground">
-              Click the button above to start a conversation with your AI voice assistant. 
-              Make sure to allow microphone access when prompted.
-            </p>
-          </div>
-        )}
       </div>
     </div>
   );
