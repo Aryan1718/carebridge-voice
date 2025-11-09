@@ -31,16 +31,32 @@ export const VoiceAssistant = () => {
         console.log("Full conversation text:", conversationText);
         
         // Look for patterns where organizations are mentioned
-        // Pattern 1: "resources that might be able to help: [org names]"
-        const resourcePattern = /(?:resources|organizations).*?(?:help|available):\s*([^.]+)/gi;
-        const matches = [...conversationText.matchAll(resourcePattern)];
+        // Multiple patterns to catch different phrasings
+        const patterns = [
+          /(?:here are (?:a few )?(?:nearby )?)?resources.*?help:\s*([^.?!]+)/gi,
+          /(?:organizations|resources).*?(?:help|available|assist):\s*([^.?!]+)/gi,
+          /(?:including|such as|like):\s*([^.?!]+)/gi
+        ];
         
-        if (matches.length > 0) {
-          // Extract organization names from comma-separated lists
-          const orgNames = matches[0][1]
-            .split(/,|\band\b/)
-            .map(name => name.trim())
-            .filter(name => name.length > 0 && !name.toLowerCase().includes('navigation center'));
+        const allOrgNames = new Set<string>();
+        
+        // Try all patterns
+        patterns.forEach(pattern => {
+          const matches = [...conversationText.matchAll(pattern)];
+          matches.forEach(match => {
+            if (match[1]) {
+              // Split by comma, "and", "or"
+              const names = match[1]
+                .split(/,|\band\b|\bor\b/gi)
+                .map(name => name.trim())
+                .filter(name => name.length > 0);
+              names.forEach(name => allOrgNames.add(name));
+            }
+          });
+        });
+        
+        if (allOrgNames.size > 0) {
+          const orgNames = Array.from(allOrgNames);
           
           const parsedOrgs = orgNames.map(name => {
             const cleanName = name.replace(/\([^)]*\)/g, '').trim();
