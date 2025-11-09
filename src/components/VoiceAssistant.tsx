@@ -195,6 +195,47 @@ export const VoiceAssistant = () => {
           )}
         </Button>
 
+        {/* Conversation Transcript - Only show after conversation ends */}
+        {!isConnected && status !== "connecting" && conversationText && (
+          <div className="mt-8 w-full max-w-4xl animate-in fade-in duration-500">
+            <Card className="bg-card/50 backdrop-blur-sm border-border">
+              <CardHeader>
+                <CardTitle className="text-2xl">Conversation Transcript</CardTitle>
+                <CardDescription>Full record of your conversation</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="max-h-96 overflow-y-auto space-y-4 p-4 bg-background/50 rounded-lg">
+                  {conversationText.split('\n').filter(line => line.trim()).map((line, idx) => {
+                    const isAssistant = line.startsWith('Assistant:');
+                    const isUser = line.startsWith('User:');
+                    const text = line.replace(/^(Assistant:|User:)\s*/, '');
+                    
+                    return (
+                      <div 
+                        key={idx} 
+                        className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}
+                      >
+                        <div 
+                          className={`max-w-[80%] p-3 rounded-lg ${
+                            isAssistant 
+                              ? 'bg-primary/10 text-foreground' 
+                              : 'bg-secondary/10 text-foreground'
+                          }`}
+                        >
+                          <p className="text-xs font-semibold mb-1 opacity-70">
+                            {isAssistant ? 'Assistant' : 'You'}
+                          </p>
+                          <p className="text-sm">{text}</p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
         {/* Organization Cards - Only show after conversation ends */}
         {!isConnected && status !== "connecting" && organizations.length > 0 && (
           <div className="mt-8 w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 animate-in fade-in duration-500">
