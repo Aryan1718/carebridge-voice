@@ -28,40 +28,21 @@ export const VoiceAssistant = () => {
       
       // Parse organizations from the complete conversation when it ends
       if (conversationText) {
-        console.log("=== FULL CONVERSATION TEXT ===");
-        console.log(conversationText);
-        console.log("=== END CONVERSATION TEXT ===");
+        console.log("Full conversation text:", conversationText);
         
-        // Multiple parsing strategies to catch organizations
-        const allOrgNames = new Set<string>();
+        // Look for patterns where organizations are mentioned
+        // Pattern 1: "resources that might be able to help: [org names]"
+        const resourcePattern = /(?:resources|organizations).*?(?:help|available):\s*([^.]+)/gi;
+        const matches = [...conversationText.matchAll(resourcePattern)];
         
-        // Strategy 1: Look for common patterns
-        const patterns = [
-          /(?:resources|organizations|here are some|including|such as|like|try|contact|reach out to|visit)[\s:]*([^.?!]+)/gi,
-          /(?:at|to)\s+([A-Z][A-Za-z\s&'-]+(?:Foundation|Church|Center|Bank|Team|House|Mission|Shelter|Kitchen|Program))/g,
-          /([A-Z][A-Za-z\s&'-]{2,}(?:Foundation|Church|Center|Bank|Team|House|Mission|Shelter|Kitchen|Program))/g,
-        ];
-        
-        patterns.forEach(pattern => {
-          const matches = [...conversationText.matchAll(pattern)];
-          matches.forEach(match => {
-            const text = match[1] || match[0];
-            const names = text.split(/,|\band\b|\bor\b/);
-            names.forEach(name => {
-              const cleaned = name.trim().replace(/^(at|to|the)\s+/i, '');
-              if (cleaned.length > 5 && !cleaned.toLowerCase().includes('navigation center')) {
-                allOrgNames.add(cleaned);
-              }
-            });
-          });
-        });
-        
-        console.log("=== EXTRACTED ORGANIZATIONS ===");
-        console.log(Array.from(allOrgNames));
-        console.log("=== END EXTRACTED ===");
-        
-        if (allOrgNames.size > 0) {
-          const parsedOrgs = Array.from(allOrgNames).map(name => {
+        if (matches.length > 0) {
+          // Extract organization names from comma-separated lists
+          const orgNames = matches[0][1]
+            .split(/,|\band\b/)
+            .map(name => name.trim())
+            .filter(name => name.length > 0 && !name.toLowerCase().includes('navigation center'));
+          
+          const parsedOrgs = orgNames.map(name => {
             const cleanName = name.replace(/\([^)]*\)/g, '').trim();
             
             // Create detailed information based on organization name
@@ -246,16 +227,6 @@ export const VoiceAssistant = () => {
           )}
         </Button>
 
-        {/* Info card */}
-        {!isConnected && status !== "connecting" && !conversationText && (
-          <div className="mt-8 p-6 rounded-2xl bg-card/50 backdrop-blur-sm border border-border max-w-md animate-in fade-in duration-500">
-            <p className="text-sm text-muted-foreground">
-              Click the button above to start a conversation with your AI voice assistant. 
-              Make sure to allow microphone access when prompted.
-            </p>
-          </div>
-        )}
-
         {/* Conversation Transcript - Only show after conversation ends */}
         {!isConnected && status !== "connecting" && conversationText && (
           <div className="mt-8 w-full max-w-4xl animate-in fade-in duration-500">
@@ -352,6 +323,15 @@ export const VoiceAssistant = () => {
           </div>
         )}
 
+        {/* Info card */}
+        {!isConnected && status !== "connecting" && (
+          <div className="mt-8 p-6 rounded-2xl bg-card/50 backdrop-blur-sm border border-border max-w-md animate-in fade-in duration-500">
+            <p className="text-sm text-muted-foreground">
+              Click the button above to start a conversation with your AI voice assistant. 
+              Make sure to allow microphone access when prompted.
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );
