@@ -8,45 +8,45 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 200 45% 96%;
-    --foreground: 200 15% 20%;
+    --background: 210 30% 97%;
+    --foreground: 215 20% 25%;
 
     --card: 0 0% 100%;
-    --card-foreground: 200 15% 20%;
+    --card-foreground: 215 20% 25%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 200 15% 20%;
+    --popover-foreground: 215 20% 25%;
 
-    --primary: 200 70% 65%;
+    --primary: 205 55% 70%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 120 25% 65%;
-    --secondary-foreground: 120 15% 20%;
+    --secondary: 140 30% 68%;
+    --secondary-foreground: 140 25% 20%;
 
-    --muted: 200 30% 90%;
-    --muted-foreground: 200 10% 45%;
+    --muted: 210 25% 92%;
+    --muted-foreground: 215 15% 50%;
 
-    --accent: 50 85% 75%;
-    --accent-foreground: 50 15% 20%;
+    --accent: 25 70% 80%;
+    --accent-foreground: 25 20% 25%;
 
-    --destructive: 0 84% 60%;
+    --destructive: 0 70% 65%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 200 30% 85%;
-    --input: 200 30% 85%;
-    --ring: 200 70% 65%;
+    --border: 210 20% 88%;
+    --input: 210 20% 88%;
+    --ring: 205 55% 70%;
 
     --radius: 1rem;
 
-    /* CareBridge gradient colors - soft and welcoming */
-    --gradient-start: 200 55% 92%;
-    --gradient-mid: 120 35% 88%;
-    --gradient-end: 50 70% 90%;
+    /* CareBridge gradient colors - warm and compassionate */
+    --gradient-start: 205 45% 90%;
+    --gradient-mid: 140 35% 85%;
+    --gradient-end: 25 65% 88%;
     
-    /* Glow effects - soft and calming */
-    --glow-primary: 200 70% 65%;
-    --glow-accent: 120 35% 60%;
-    --glow-tertiary: 50 85% 70%;
+    /* Glow effects - gentle and caring */
+    --glow-primary: 205 55% 70%;
+    --glow-accent: 140 35% 65%;
+    --glow-tertiary: 25 70% 75%;
     
     /* Animation speeds */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
