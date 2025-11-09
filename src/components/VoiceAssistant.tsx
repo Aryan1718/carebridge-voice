@@ -21,6 +21,7 @@ interface Organization {
 export const VoiceAssistant = () => {
   const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [conversationText, setConversationText] = useState<string>("");
+  const [assistantText, setAssistantText] = useState<string>("");
 
   const conversation = useConversation({
     onConnect: () => {
@@ -29,33 +30,19 @@ export const VoiceAssistant = () => {
     onDisconnect: () => {
       console.log("Disconnected from ElevenLabs");
       
-      // Parse organizations from the complete conversation when it ends
-      if (conversationText) {
-        console.log("Full conversation text:", conversationText);
+      // Parse organizations only from assistant messages
+      if (assistantText) {
+        console.log("Assistant text:", assistantText);
         
-        // Match organizations mentioned in conversation against our JSON database
+        // Match organizations mentioned by the assistant
         const matchedOrgs: Organization[] = [];
+        const assistantLower = assistantText.toLowerCase();
         
         organizationsData.forEach((org) => {
-          // Check if organization name is mentioned (case-insensitive, fuzzy match)
           const orgNameLower = org.name.toLowerCase();
-          const conversationLower = conversationText.toLowerCase();
           
-          // Match full name or significant parts of name
-          const nameVariations = [
-            orgNameLower,
-            ...orgNameLower.split(/\s+/), // individual words
-            ...org.keywords.map(k => k.toLowerCase().replace(/-/g, ' '))
-          ];
-          
-          const isMatch = nameVariations.some(variation => {
-            if (variation.length > 3) { // Only check meaningful words
-              return conversationLower.includes(variation);
-            }
-            return false;
-          });
-          
-          if (isMatch) {
+          // Check if the full organization name is mentioned in assistant's response
+          if (assistantLower.includes(orgNameLower)) {
             matchedOrgs.push(org);
           }
         });
@@ -67,7 +54,7 @@ export const VoiceAssistant = () => {
     onMessage: (message: any) => {
       console.log("Message received:", message);
       
-      // Accumulate all conversation messages
+      // Accumulate conversation messages
       if (message && typeof message === 'object') {
         const messageText = message.message;
         const source = message.source;
@@ -76,6 +63,11 @@ export const VoiceAssistant = () => {
           const speaker = source === 'ai' ? 'Assistant' : 'User';
           console.log(`Capturing message from ${speaker}:`, messageText.substring(0, 50));
           setConversationText(prev => prev + `\n${speaker}: ${messageText}`);
+          
+          // Only capture assistant messages for organization matching
+          if (source === 'ai') {
+            setAssistantText(prev => prev + ' ' + messageText);
+          }
         }
       }
     },
@@ -106,6 +98,7 @@ export const VoiceAssistant = () => {
       try {
         setOrganizations([]); // Clear previous results
         setConversationText(""); // Clear previous conversation
+        setAssistantText(""); // Clear assistant text
         await conversation.startSession({
           agentId: "agent_2501k9jkm33getbbgxtk7pkmpxnk",
         } as any);
