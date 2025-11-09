@@ -59,13 +59,19 @@ export const VoiceAssistant = () => {
         }
       }
     },
-    onMessage: (message) => {
+    onMessage: (message: any) => {
       console.log("Message received:", message);
       
       // Accumulate all conversation messages
-      if (message.message && typeof message.message === 'string') {
-        const speaker = message.source === 'ai' ? 'Assistant' : 'User';
-        setConversationText(prev => prev + `\n${speaker}: ${message.message}`);
+      if (message && typeof message === 'object') {
+        const messageText = message.message;
+        const source = message.source;
+        
+        if (messageText && typeof messageText === 'string' && source) {
+          const speaker = source === 'ai' ? 'Assistant' : 'User';
+          console.log(`Capturing message from ${speaker}:`, messageText.substring(0, 50));
+          setConversationText(prev => prev + `\n${speaker}: ${messageText}`);
+        }
       }
     },
     onError: (error) => {
